@@ -11,44 +11,61 @@ namespace WpfApp1
 {
     public class DetailViewModel
     {
-        private DetailModel _model;
+        private ReactivePropertySlim<DetailModel> _model = new();
 
         public ReactivePropertySlim<int> Number { get; } = new(1);
 
-        public ReactivePropertySlim<string> Text1 { get; private set; } = new(string.Empty);
+        public ReactivePropertySlim<string> Text1 { get; } = new(string.Empty);
 
-        public ReactivePropertySlim<string> Text2 { get; private set; } = new(string.Empty);
+        public ReactivePropertySlim<string> Text2 { get; } = new(string.Empty);
 
-        public ReactivePropertySlim<string> Text3 { get; private set; } = new(string.Empty);
+        public ReactivePropertySlim<string> Text3 { get; } = new(string.Empty);
 
         public DetailViewModel(int number, DetailModel model)
         {
-            _model = model;
+            _model.Value = model;
 
             Number.Value = number;
 
-            InitSyncronized();
-        }
+            Text1 = _model.ToReactivePropertySlimAsSynchronized(
+                x => x.Value,
+                x => x.Text1,
+                x =>
+                {
+                    _model.Value.Text1 = x;
 
-        private void InitSyncronized()
-        {
-            Text1 = _model.Text1.ToReactivePropertySlimAsSynchronized(x => x.Value);
-            Text2 = _model.Text2.ToReactivePropertySlimAsSynchronized(x => x.Value);
-            Text3 = _model.Text3.ToReactivePropertySlimAsSynchronized(x => x.Value);
+                    return _model.Value;
+                });
+
+            Text2 = _model.ToReactivePropertySlimAsSynchronized(
+                x => x.Value,
+                x => x.Text2,
+                x =>
+                {
+                    _model.Value.Text2 = x;
+
+                    return _model.Value;
+                });
+
+            Text3 = _model.ToReactivePropertySlimAsSynchronized(
+                x => x.Value,
+                x => x.Text3,
+                x =>
+                {
+                    _model.Value.Text3 = x;
+
+                    return _model.Value;
+                });
         }
 
         public void UpdateModel(DetailModel model)
         {
-            _model = model;
-
-            Text1.ForceNotify();
-            Text2.ForceNotify();
-            Text3.ForceNotify();
+            _model.Value = model;
         }
 
         public bool IsMatchModel(DetailModel model)
         {
-            return _model == model;
+            return _model.Value == model;
         }
     }
 }
