@@ -38,7 +38,11 @@ namespace WpfApp1
                 if (IsSelectedRow(dataGrid))
                 {
                     // TODO : 最小indexを含んだらやらない、そもそもボタン非活性
-                    _model.MoveUp(GetSelectedRowIndexs(dataGrid));
+                    var indexes = GetSelectedRowIndexs(dataGrid);
+                    _model.MoveUp(indexes);
+
+                    var shiftedIndexes = indexes.Select(x => x - 1).ToList();
+                    MoveSelectedRowIndex(shiftedIndexes);
                 }
             });
 
@@ -47,7 +51,11 @@ namespace WpfApp1
                 if (IsSelectedRow(dataGrid))
                 {
                     // TODO : 最大indexを含んだらやらない、そもそもボタン非活性
-                    _model.MoveDown(GetSelectedRowIndexs(dataGrid));
+                    var indexes = GetSelectedRowIndexs(dataGrid);
+                    _model.MoveDown(indexes);
+
+                    var shiftedIndexes = indexes.Select(x => x + 1).ToList();
+                    MoveSelectedRowIndex(shiftedIndexes);
                 }
             });
 
@@ -98,6 +106,22 @@ namespace WpfApp1
             }
 
             return ret;
+        }
+
+        private void MoveSelectedRowIndex(List<int> indexes)
+        {
+            // CurrentCell設定
+            DataGridCellInfo cellInfo = new DataGridCellInfo(dataGrid.Items[indexes[0]], dataGrid.Columns[1]);
+            dataGrid.CurrentCell = cellInfo;
+            dataGrid.SelectedIndex = indexes[0];
+
+            // 選択セル群設定
+            dataGrid.SelectedItems.Clear();
+            foreach(var index in indexes)
+            {
+                dataGrid.SelectedItems.Add(Details[index]);
+            }
+
         }
     }
 }
