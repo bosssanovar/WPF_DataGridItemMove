@@ -18,10 +18,14 @@ namespace WpfApp1
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowModel _model;
+
         public ReactiveCollection<DetailViewModel> Details { get; } = [];
 
         public MainWindow()
         {
+            _model = new();
+
             InitDetails();
 
             InitializeComponent();
@@ -29,9 +33,9 @@ namespace WpfApp1
 
         private void InitDetails()
         {
-            for(int i=0; i<10; i++)
+            for(int i=0; i<_model.Details.Count; i++)
             {
-                Details.Add(new(i + 1, $"item {i + 1}", $"item {i + 1}", $"item {i + 1}"));
+                Details.Add(new(i + 1, _model.Details[i]));
             }
         }
     }
