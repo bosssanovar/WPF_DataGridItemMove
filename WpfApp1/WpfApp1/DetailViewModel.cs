@@ -36,5 +36,19 @@ namespace WpfApp1
             Text2 = _model.Text2.ToReactivePropertySlimAsSynchronized(x => x.Value);
             Text3 = _model.Text3.ToReactivePropertySlimAsSynchronized(x => x.Value);
         }
+
+        public void UpdateModel(DetailModel model)
+        {
+            _model = model;
+
+            Text1.ForceNotify();
+            Text2.ForceNotify();
+            Text3.ForceNotify();
+        }
+
+        public bool IsMatchModel(DetailModel model)
+        {
+            return _model == model;
+        }
     }
 }
