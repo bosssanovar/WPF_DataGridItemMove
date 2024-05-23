@@ -41,33 +41,27 @@ namespace WpfApp1
             UpCommand = CanUp.Select(x => x).ToReactiveCommand();
             UpCommand.Subscribe(() =>
             {
-                if (IsSelectedRow(dataGrid))
-                {
-                    var indexes = GetSelectedRowIndexs(dataGrid);
-                    _model.MoveUp(indexes);
+                var indexes = GetSelectedRowIndexs(dataGrid);
+                _model.MoveUp(indexes);
 
-                    var shiftedIndexes = indexes.Select(x => x - 1).ToList();
-                    MoveSelectedRowIndex(shiftedIndexes);
+                var shiftedIndexes = indexes.Select(x => x - 1).ToList();
+                MoveSelectedRowIndex(shiftedIndexes);
 
-                    var lastSelectedIndex = indexes.Last();
-                    dataGrid.ScrollIntoView(Details[lastSelectedIndex - 1]);
-                }
+                var lastSelectedIndex = indexes.Last();
+                dataGrid.ScrollIntoView(Details[lastSelectedIndex - 1]);
             });
 
             DownCommand = CanDown.Select(x => x).ToReactiveCommand();
             DownCommand.Subscribe(() =>
             {
-                if (IsSelectedRow(dataGrid))
-                {
-                    var indexes = GetSelectedRowIndexs(dataGrid);
-                    _model.MoveDown(indexes);
+                var indexes = GetSelectedRowIndexs(dataGrid);
+                _model.MoveDown(indexes);
 
-                    var shiftedIndexes = indexes.Select(x => x + 1).ToList();
-                    MoveSelectedRowIndex(shiftedIndexes);
+                var shiftedIndexes = indexes.Select(x => x + 1).ToList();
+                MoveSelectedRowIndex(shiftedIndexes);
 
-                    var lastSelectedIndex = indexes.Last();
-                    dataGrid.ScrollIntoView(Details[lastSelectedIndex + 1]);
-                }
+                var lastSelectedIndex = indexes.Last();
+                dataGrid.ScrollIntoView(Details[lastSelectedIndex + 1]);
             });
 
             _model.Details.ObserveMoveChanged().Subscribe(e =>
@@ -100,11 +94,6 @@ namespace WpfApp1
             {
                 Details.Add(new(i + 1, _model.Details[i]));
             }
-        }
-
-        private bool IsSelectedRow(DataGrid grid)
-        {
-            return grid.SelectedIndex != -1;
         }
 
         private List<int> GetSelectedRowIndexs(DataGrid grid)
@@ -190,6 +179,5 @@ namespace WpfApp1
                 }
             }
         }
-        // TODO : 追従スクロール
     }
 }
