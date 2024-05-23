@@ -12,6 +12,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Linq;
 using Reactive.Bindings.Extensions;
+using System.Reactive.Linq;
+using System.DirectoryServices.ActiveDirectory;
 
 namespace WpfApp1
 {
@@ -21,6 +23,9 @@ namespace WpfApp1
     public partial class MainWindow : Window
     {
         private MainWindowModel _model;
+
+        private ReactivePropertySlim<bool> CanUp { get; } = new(false);
+        private ReactivePropertySlim<bool> CanDown { get; } = new(false);
 
         public ReactiveCollection<DetailViewModel> Details { get; } = [];
 
@@ -33,11 +38,11 @@ namespace WpfApp1
 
             InitDetails();
 
+            UpCommand = CanUp.Select(x => x).ToReactiveCommand();
             UpCommand.Subscribe(() =>
             {
                 if (IsSelectedRow(dataGrid))
                 {
-                    // TODO : 最小indexを含んだらやらない、そもそもボタン非活性
                     var indexes = GetSelectedRowIndexs(dataGrid);
                     _model.MoveUp(indexes);
 
@@ -46,11 +51,11 @@ namespace WpfApp1
                 }
             });
 
+            DownCommand = CanDown.Select(x => x).ToReactiveCommand();
             DownCommand.Subscribe(() =>
             {
                 if (IsSelectedRow(dataGrid))
                 {
-                    // TODO : 最大indexを含んだらやらない、そもそもボタン非活性
                     var indexes = GetSelectedRowIndexs(dataGrid);
                     _model.MoveDown(indexes);
 
@@ -76,6 +81,8 @@ namespace WpfApp1
                     Details[sourceIndex + 1].UpdateModel(_model.Details[sourceIndex + 1]);
                 }
             });
+
+            firstAction = ActionFirst;
 
             InitializeComponent();
         }
@@ -117,11 +124,66 @@ namespace WpfApp1
 
             // 選択セル群設定
             dataGrid.SelectedItems.Clear();
-            foreach(var index in indexes)
+            foreach (var index in indexes)
             {
                 dataGrid.SelectedItems.Add(Details[index]);
             }
 
         }
+
+        private Action<SelectionChangedEventArgs>? firstAction;
+
+        private void ActionFirst(SelectionChangedEventArgs e)
+        {
+            CanUp.Value = true;
+            CanDown.Value = true;
+
+            foreach (DetailViewModel item in e.AddedItems)
+            {
+                if (item.Number.Value == 1)
+                {
+                    CanUp.Value = false;
+                }
+                else if (item.Number.Value == MainWindowModel.RowAmount)
+                {
+                    CanDown.Value = false;
+                }
+            }
+        }
+
+        private void dataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (firstAction is not null)
+            {
+                firstAction(e);
+
+                firstAction = null;
+            }
+
+            foreach (DetailViewModel item in e.AddedItems)
+            {
+                if (item.Number.Value == 1)
+                {
+                    CanUp.Value = false;
+                }
+                else if (item.Number.Value == MainWindowModel.RowAmount)
+                {
+                    CanDown.Value = false;
+                }
+            }
+
+            foreach (DetailViewModel item in e.RemovedItems)
+            {
+                if (item.Number.Value == 1)
+                {
+                    CanUp.Value = true;
+                }
+                else if (item.Number.Value == MainWindowModel.RowAmount)
+                {
+                    CanDown.Value = true;
+                }
+            }
+        }
+        // TODO : 追従スクロール
     }
 }

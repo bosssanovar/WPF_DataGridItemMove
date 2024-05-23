@@ -18,7 +18,8 @@
                   CanUserResizeRows="False" CanUserSortColumns="False"
                   SelectionMode="Extended" SelectionUnit="FullRow"
                   ItemsSource="{Binding Details}" d:ItemsSource="{d:SampleData ItemCount=10}"
-                  MaxHeight="300">
+                  MaxHeight="300"
+                  SelectionChanged="dataGrid_SelectionChanged">
             
             <DataGrid.Resources>
                 <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"

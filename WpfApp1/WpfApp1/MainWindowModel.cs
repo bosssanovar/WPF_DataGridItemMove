@@ -11,6 +11,8 @@ namespace WpfApp1
 {
     public class MainWindowModel
     {
+        public const int RowAmount = 100;
+
         public ReactiveCollection<DetailModel> Details { get; } = [];
 
         public MainWindowModel()
@@ -20,7 +22,7 @@ namespace WpfApp1
 
         private void InitDetails()
         {
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < RowAmount; i++)
             {
                 Details.Add(new()
                 {
