@@ -48,6 +48,9 @@ namespace WpfApp1
 
                     var shiftedIndexes = indexes.Select(x => x - 1).ToList();
                     MoveSelectedRowIndex(shiftedIndexes);
+
+                    var lastSelectedIndex = indexes.Last();
+                    dataGrid.ScrollIntoView(Details[lastSelectedIndex - 1]);
                 }
             });
 
@@ -61,6 +64,9 @@ namespace WpfApp1
 
                     var shiftedIndexes = indexes.Select(x => x + 1).ToList();
                     MoveSelectedRowIndex(shiftedIndexes);
+
+                    var lastSelectedIndex = indexes.Last();
+                    dataGrid.ScrollIntoView(Details[lastSelectedIndex + 1]);
                 }
             });
 
